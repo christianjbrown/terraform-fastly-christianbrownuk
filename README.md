@@ -1,4 +1,4 @@
-# fastly-terraform-christianbrown
+# terraform-christian-fastly
 
 Terraform — the **source of truth** — for the Fastly VCL service that fronts the
 GCP Cloud Functions telemetry API at **`cdn.christianbrown.uk`**
@@ -47,7 +47,7 @@ the service in the Fastly UI/CLI, or you introduce drift.
 
 - **`FASTLY_API_KEY` repo secret** — create a dedicated Fastly **automation token**
   with write access to this service (Fastly UI → Account → API tokens) and set it:
-  `gh secret set FASTLY_API_KEY --repo christianjbrown/fastly-terraform-christianbrown`.
+  `gh secret set FASTLY_API_KEY --repo christianjbrown/terraform-christian-fastly`.
   (Don't reuse a personal/SSO token for CI.)
 - GCP resources already provisioned: the state bucket, the `fastly-tf` service
   account + its bucket/secret grants, and the `fastly-terraform` WIF provider
