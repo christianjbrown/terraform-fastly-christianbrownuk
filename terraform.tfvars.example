@@ -1,7 +1,10 @@
-# Copy to terraform.tfvars (gitignored) OR, preferred, export as env vars:
-#   export FASTLY_API_KEY="..."                 # used by the provider directly
-#   export TF_VAR_request_auth_value="..."      # the injected X-Request-Auth secret
+# The only input is the Fastly token, and it is best supplied via the environment
+# (never a committed file):
+#   export FASTLY_API_KEY="..."
 #
-# If you do use a tfvars file instead of env vars, it is gitignored — keep it that way.
-
-# request_auth_value = "replace-me-do-not-commit"
+# The X-Request-Auth secret is NOT set here — Terraform reads it from GCP Secret
+# Manager. You just need GCP credentials for the google provider + GCS backend:
+#   export GOOGLE_OAUTH_ACCESS_TOKEN="$(gcloud auth print-access-token)"
+#   # or Application Default Credentials, or (in CI) Workload Identity Federation.
+#
+# If you ever add other variables, a real terraform.tfvars is gitignored — keep it that way.

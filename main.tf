@@ -6,6 +6,13 @@
 #
 # Service id (for reference): 7ieJm1LpaPnVCNb3tzURac
 
+# The shared-secret gate value, read from the same Secret Manager secret the
+# Cloud Function reads (single source of truth). Never stored in this repo or CI.
+data "google_secret_manager_secret_version" "request_auth" {
+  secret  = "SMARTTHINGS_REQUIRED_HEADER_VALUE"
+  project = "christianbrown"
+}
+
 resource "fastly_service_vcl" "cdn" {
   name = "GCP Cloud Functions API"
 
@@ -43,14 +50,14 @@ resource "fastly_service_vcl" "cdn" {
   }
 
   # Inject the shared-secret gate header so the origin Cloud Function accepts the
-  # request without the browser ever seeing it. Value comes from a variable —
-  # never hardcode/commit it (see variables.tf).
+  # request without the browser ever seeing it. Value is read from Secret Manager
+  # at plan/apply time — never hardcoded or committed.
   header {
     name          = "Set X-Request-Auth"
     type          = "request"
     action        = "set"
     destination   = "http.X-Request-Auth"
-    source        = "\"${var.request_auth_value}\""
+    source        = "\"${data.google_secret_manager_secret_version.request_auth.secret_data}\""
     ignore_if_set = false
     priority      = 10
   }
