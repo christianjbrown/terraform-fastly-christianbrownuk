@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars (gitignored) OR, preferred, export as env vars:
+#   export FASTLY_API_KEY="..."                 # used by the provider directly
+#   export TF_VAR_request_auth_value="..."      # the injected X-Request-Auth secret
+#
+# If you do use a tfvars file instead of env vars, it is gitignored — keep it that way.
+
+# request_auth_value = "replace-me-do-not-commit"
