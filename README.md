@@ -1,4 +1,4 @@
-# terraform-christian-fastly
+# Terraform configuration for christianbrown.uk APIs
 
 Terraform — the **source of truth** — for the Fastly VCL service that fronts the
 GCP Cloud Functions telemetry API at **`cdn.christianbrown.uk`**
