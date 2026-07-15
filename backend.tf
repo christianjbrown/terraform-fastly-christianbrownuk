@@ -1,19 +1,19 @@
-# Remote state. Terraform state can contain sensitive values (e.g. the injected
-# X-Request-Auth secret), so it must NOT live in git. You are already on GCP, so
-# a GCS bucket is the natural home.
+# Remote state in a private, versioned GCS bucket (public-access-prevention
+# enforced). State can contain sensitive values, so it must never be committed —
+# it lives here, access-controlled by GCP IAM, not in git.
 #
-# 1. Create a private, versioned bucket once (outside Terraform):
-#      gcloud storage buckets create gs://christianbrown-tf-state \
-#        --location=europe-west2 --uniform-bucket-level-access
-#      gcloud storage buckets update gs://christianbrown-tf-state --versioning
-# 2. Uncomment the block below and run `terraform init` to migrate state.
+# Bucket bootstrap (run once, already done):
+#   gcloud storage buckets create gs://christianbrown-tf-state \
+#     --project=christianbrown --location=europe-west2 \
+#     --uniform-bucket-level-access --public-access-prevention
+#   gcloud storage buckets update gs://christianbrown-tf-state --versioning
 #
-# Until then, Terraform uses local state (./terraform.tfstate) — which is
-# gitignored. Do not commit it.
+# Auth: uses Application Default Credentials, or GOOGLE_OAUTH_ACCESS_TOKEN
+# (e.g. `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`).
 
-# terraform {
-#   backend "gcs" {
-#     bucket = "christianbrown-tf-state"
-#     prefix = "fastly/cdn"
-#   }
-# }
+terraform {
+  backend "gcs" {
+    bucket = "christianbrown-tf-state"
+    prefix = "fastly/cdn"
+  }
+}
