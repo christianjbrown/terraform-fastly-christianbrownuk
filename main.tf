@@ -9,7 +9,7 @@
 # The shared-secret gate value, read from the same Secret Manager secret the
 # Cloud Function reads (single source of truth). Never stored in this repo or CI.
 data "google_secret_manager_secret_version" "request_auth" {
-  secret  = "SMARTTHINGS_REQUIRED_HEADER_VALUE"
+  secret  = "FASTLY_REQUIRED_HEADER_VALUE"
   project = "christianbrown"
 }
 
