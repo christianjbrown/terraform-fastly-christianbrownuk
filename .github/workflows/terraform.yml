@@ -1,0 +1,62 @@
+name: Terraform
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Least-privilege: id-token for Workload Identity Federation; write PR comments.
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+# Never let two applies race the same state.
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Fastly provider auth (repo secret — set once: see README).
+  FASTLY_API_KEY: ${{ secrets.FASTLY_API_KEY }}
+
+jobs:
+  terraform:
+    name: fmt / validate / plan (apply on main)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # GCP auth via WIF — grants ADC for both the GCS state backend and the
+      # Secret Manager data source. No JSON key involved.
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.8"
+          terraform_wrapper: false
+
+      - name: Format check
+        run: terraform fmt -check -recursive
+
+      - name: Init
+        run: terraform init -input=false
+
+      - name: Validate
+        run: terraform validate
+
+      # On PRs: show the plan (the injected secret is marked sensitive, so it is
+      # redacted as "(sensitive value)" in the log — safe for a public repo).
+      - name: Plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false -no-color
+
+      # On merge to main: apply. This is the ONLY sanctioned way the live service
+      # changes — the repo is the source of truth.
+      - name: Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -input=false -auto-approve -no-color
