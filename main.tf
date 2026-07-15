@@ -56,8 +56,7 @@ resource "fastly_service_vcl" "cdn" {
   }
 
   # Strip query strings service-wide (also protects the 1-instance origin from
-  # query-varied cache-busting). NOTE: this makes the strip_query_telemetry
-  # snippet below redundant — consider removing that snippet in a later change.
+  # query-varied cache-busting).
   header {
     name          = "Remove querystrings"
     type          = "request"
@@ -73,15 +72,6 @@ resource "fastly_service_vcl" "cdn" {
     force_ssl     = true
     force_miss    = false
     max_stale_age = 0
-  }
-
-  # Per-path query strip (redundant with the "Remove querystrings" header above,
-  # but kept to match the live service; was service version 15).
-  snippet {
-    name     = "strip_query_telemetry"
-    type     = "recv"
-    priority = 100
-    content  = file("${path.module}/vcl/strip_query.vcl")
   }
 
   # --- Per-client rate limiter. REQUIRES Fastly to enable "VCL rate limiting"
