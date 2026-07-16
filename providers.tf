@@ -7,5 +7,5 @@ provider "google" {
   # Used only to read the X-Request-Auth secret from Secret Manager.
   # Auth via Application Default Credentials, GOOGLE_OAUTH_ACCESS_TOKEN, or (in CI)
   # Workload Identity Federation.
-  project = "christianbrown"
+  project = var.gcp_project
 }
