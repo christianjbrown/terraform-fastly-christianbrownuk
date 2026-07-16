@@ -46,7 +46,7 @@ the service in the Fastly UI/CLI, or you introduce drift.
 
 - **`FASTLY_API_KEY` repo secret** — create a dedicated Fastly **automation token**
   with write access to this service (Fastly UI → Account → API tokens) and set it:
-  `gh secret set FASTLY_API_KEY --repo christianjbrown/terraform-christian-fastly`.
+  `gh secret set FASTLY_API_KEY --repo christianjbrown/terraform-fastly-christianbrownuk`.
   (Don't reuse a personal/SSO token for CI.)
 - GCP resources already provisioned: the state bucket, the `fastly-tf` service
   account + its bucket/secret grants, and the `fastly-terraform` WIF provider
