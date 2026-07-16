@@ -5,6 +5,13 @@ on:
     branches: [main]
   push:
     branches: [main]
+    # Doc-only pushes to main skip the apply. Deliberately NOT set on
+    # pull_request: the "terraform" check is required by branch protection, so a
+    # docs-only PR must still run it or it could never be merged.
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
 
 # Least-privilege: id-token for Workload Identity Federation; write PR comments.
 permissions:
