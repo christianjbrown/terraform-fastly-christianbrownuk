@@ -13,8 +13,8 @@ query-string strip that protects the single-instance origin, and the injected
 - **State** lives in a private, versioned GCS bucket (`christianbrown-tf-state`,
   public-access-prevention enforced) — never on disk in CI, never in git.
 - **The gate secret** is read at plan/apply time from GCP Secret Manager
-  (`SMARTTHINGS_REQUIRED_HEADER_VALUE`) — the same secret the Cloud Function
-  uses. It is `sensitive`, so it is redacted in plan output.
+  (`FASTLY_REQUIRED_HEADER_VALUE`) — the same secret the Cloud Functions behind
+  this service use. It is `sensitive`, so it is redacted in plan output.
 - **CI** (`.github/workflows/terraform.yml`) runs `fmt`/`validate`/`plan` on every
   PR and `apply` on merge to `main`. It authenticates to GCP via **Workload
   Identity Federation** (no JSON keys) using a dedicated, least-privilege service
@@ -29,7 +29,6 @@ query-string strip that protects the single-instance origin, and the injected
 | `backend.tf` | GCS remote-state config |
 | `variables.tf` | Only `fastly_api_key` (via env/secret) |
 | `.github/workflows/terraform.yml` | plan-on-PR / apply-on-main CI |
-| `vcl/rl_telemetry_*.vcl` | Staged rate limiter (needs Fastly to enable VCL rate limiting) |
 
 ## Local use
 
@@ -53,13 +52,6 @@ the service in the Fastly UI/CLI, or you introduce drift.
   account + its bucket/secret grants, and the `fastly-terraform` WIF provider
   (scoped to this repo). Repo variables `GCP_WIF_PROVIDER` / `GCP_SERVICE_ACCOUNT`
   point CI at them.
-
-## Enabling the rate limiter later
-
-`ratecounter`/`penaltybox` need Fastly to switch on **VCL rate limiting** for the
-service (a support/account request — not self-serve). Once enabled, add the three
-`rl_telemetry_*` snippet blocks (commented in `main.tf`) and open a PR. Thresholds:
-429 + 5-min penalty above 10 req/s (1s) or 2 req/s (60s), per client IP.
 
 ## Public-repo notes
 

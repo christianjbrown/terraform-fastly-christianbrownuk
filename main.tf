@@ -81,27 +81,5 @@ resource "fastly_service_vcl" "cdn" {
     max_stale_age = 0
   }
 
-  # --- Per-client rate limiter. REQUIRES Fastly to enable "VCL rate limiting"
-  # on this service first (support/account request — not self-serve). Until then,
-  # activating these fails validation. Once enabled, uncomment and apply.
-  # (Staged earlier as the never-activated service version 14.)
-  #
-  # snippet {
-  #   name     = "rl_telemetry_init"
-  #   type     = "init"
-  #   content  = file("${path.module}/vcl/rl_telemetry_init.vcl")
-  # }
-  # snippet {
-  #   name     = "rl_telemetry_recv"
-  #   type     = "recv"
-  #   priority = 110
-  #   content  = file("${path.module}/vcl/rl_telemetry_recv.vcl")
-  # }
-  # snippet {
-  #   name     = "rl_telemetry_error"
-  #   type     = "error"
-  #   content  = file("${path.module}/vcl/rl_telemetry_error.vcl")
-  # }
-
   force_destroy = false
 }

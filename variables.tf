@@ -6,5 +6,5 @@ variable "fastly_api_key" {
 }
 
 # The X-Request-Auth secret is NOT a variable — it is read from GCP Secret Manager
-# (SMARTTHINGS_REQUIRED_HEADER_VALUE), the same source the Cloud Function uses. See
-# the google_secret_manager_secret_version data source in main.tf.
+# (FASTLY_REQUIRED_HEADER_VALUE), the same source the Cloud Functions use. See the
+# google_secret_manager_secret_version data source in main.tf.
