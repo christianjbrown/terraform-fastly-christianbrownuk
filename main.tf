@@ -6,11 +6,17 @@
 #
 # Service id (for reference): 7ieJm1LpaPnVCNb3tzURac
 
+# The Cloud Functions origin host, derived from the project + region so there is
+# a single source of truth (e.g. europe-west2-christianbrown.cloudfunctions.net).
+locals {
+  backend_host = "${var.gcp_region}-${var.gcp_project}.cloudfunctions.net"
+}
+
 # The shared-secret gate value, read from the same Secret Manager secret the
 # Cloud Function reads (single source of truth). Never stored in this repo or CI.
 data "google_secret_manager_secret_version" "request_auth" {
-  secret  = "FASTLY_REQUIRED_HEADER_VALUE"
-  project = "christianbrown"
+  secret  = var.request_auth_secret_name
+  project = var.gcp_project
 }
 
 resource "fastly_service_vcl" "cdn" {
@@ -21,20 +27,23 @@ resource "fastly_service_vcl" "cdn" {
   stale_if_error_ttl = 43200
 
   # Fastly-managed TLS aliases + the real hostname.
-  domain { name = "cdn.christianbrown.uk" }
-  domain { name = "cb-api.global.ssl.fastly.net" }
-  domain { name = "christianbrown.global.ssl.fastly.net" }
+  dynamic "domain" {
+    for_each = var.service_domains
+    content {
+      name = domain.value
+    }
+  }
 
   backend {
     name              = "GCP Cloud functions"
-    address           = "europe-west2-christianbrown.cloudfunctions.net"
+    address           = local.backend_host
     port              = 443
     use_ssl           = true
     ssl_check_cert    = true
-    ssl_cert_hostname = "europe-west2-christianbrown.cloudfunctions.net"
-    ssl_sni_hostname  = "europe-west2-christianbrown.cloudfunctions.net"
-    override_host     = "europe-west2-christianbrown.cloudfunctions.net"
-    shield            = "lon-london-uk"
+    ssl_cert_hostname = local.backend_host
+    ssl_sni_hostname  = local.backend_host
+    override_host     = local.backend_host
+    shield            = var.backend_shield
     weight            = 100
   }
 
