@@ -1,5 +1,7 @@
 # Terraform configuration for christianbrown.uk APIs
 
+[![Terraform](https://github.com/christianjbrown/terraform-fastly-christianbrownuk/actions/workflows/terraform.yml/badge.svg)](https://github.com/christianjbrown/terraform-fastly-christianbrownuk/actions/workflows/terraform.yml) [![License](https://img.shields.io/github/license/christianjbrown/terraform-fastly-christianbrownuk)](https://github.com/christianjbrown/terraform-fastly-christianbrownuk/blob/main/LICENSE)
+
 Terraform — the **source of truth** — for the Fastly VCL service that fronts the
 GCP Cloud Functions telemetry API at **`cdn.christianbrown.uk`**
 (service id `7ieJm1LpaPnVCNb3tzURac`).
