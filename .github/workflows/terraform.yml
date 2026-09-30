@@ -29,8 +29,9 @@ env:
   FASTLY_API_KEY: ${{ secrets.FASTLY_API_KEY }}
 
 jobs:
+  # The job name is the status check branch protection requires on main.
   terraform:
-    name: fmt / validate / plan (apply on main)
+    name: terraform
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
