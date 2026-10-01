@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": [
+    "Renovate keeps the Terraform providers and the SHA-pinned GitHub Actions current. Every update arrives as a pull request and has to pass the required checks before it merges.",
+    "Auto-merge: minor, patch and digest updates merge through GitHub native auto-merge once those checks pass.",
+    "MAJOR updates stay manual, because they can need code changes.",
+    "Provider updates never merge themselves: a merge to main runs terraform apply against the live Fastly service, so read the plan on the pull request first."
+  ],
+  "dependencyDashboard": true,
+  "automerge": true,
+  "platformAutomerge": true,
+  "packageRules": [
+    {
+      "description": "Keep major updates manual - they need review before merging.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "A merge applies the change to Fastly, so provider updates wait for a person.",
+      "matchManagers": ["terraform"],
+      "automerge": false
+    }
+  ]
+}
